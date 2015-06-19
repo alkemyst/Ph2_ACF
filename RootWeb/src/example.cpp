@@ -62,7 +62,7 @@ void prepareSiteStuff(RootWSite& site) {
   int runNumber=34;
   std::string siteTitle=Form("Run%06d", runNumber);
 
-  std::string myDirectory="/tmp/mySite";
+  std::string myDirectory="/afs/cern.ch/work/m/mersi/Ph2BeamTest/"+siteTitle;
   site.setTargetDirectory(myDirectory);
   site.setTitle(siteTitle);
   site.setComment("Complete run list");
