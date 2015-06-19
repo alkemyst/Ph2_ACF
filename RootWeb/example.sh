@@ -4,6 +4,7 @@ echo Setting up this to create mini-websites on /tmp
 echo This should be changed in order to point to a website reachable from afs
 tar -xf style.tar -C /tmp
 
+mkdir -p lib
 make && ./example.bin
 
 echo Now try looking at this:
