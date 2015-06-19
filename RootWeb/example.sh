@@ -13,5 +13,6 @@ echo type
 echo "# kinit youUserName@CERN.CH"
 echo to obtain one
 echo Now try looking at this:
-echo firefox /tmp/mySite/index.html
+echo http://cern.ch/cms-tkph2bt
+echo or
 echo firefox /afs/cern.ch/work/m/mersi/Ph2BeamTest 
