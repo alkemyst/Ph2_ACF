@@ -34,15 +34,12 @@ all: example.bin
 $(LIBDIR)/rootweb.o: $(SRCDIR)/rootweb.cpp $(INCDIR)/rootweb.hh
 	$(COMP) $(ROOTFLAGS) -c -o $(LIBDIR)/rootweb.o $(SRCDIR)/rootweb.cpp
 
-$(LIBDIR)/Palette.o: $(SRCDIR)/Palette.cc $(INCDIR)/Palette.h
-	$(COMP) $(ROOTFLAGS) -c -o $(LIBDIR)/Palette.o $(SRCDIR)/Palette.cc
-
 $(LIBDIR)/example.o: $(SRCDIR)/example.cpp
 	$(COMP) $(ROOTFLAGS) -c $(SRCDIR)/example.cpp -o $(LIBDIR)/example.o
 
 # Binary
-example.bin: $(LIBDIR)/rootweb.o $(LIBDIR)/Palette.o $(LIBDIR)/example.o 
-	$(LINK)	$(LIBDIR)/rootweb.o $(LIBDIR)/Palette.o $(LIBDIR)/example.o \
+example.bin: $(LIBDIR)/rootweb.o $(LIBDIR)/example.o 
+	$(LINK)	$(LIBDIR)/rootweb.o $(LIBDIR)/example.o \
 	$(ROOTLIBFLAGS) $(GLIBFLAGS) $(BOOSTLIBFLAGS) \
 	-o example.bin 
 

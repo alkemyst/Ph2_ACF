@@ -62,7 +62,6 @@ void prepareSiteStuff(RootWSite& site) {
   int runNumber=34;
   std::string siteTitle=Form("Run%06d", runNumber);
 
-  std::string upperDirectory = "WhoAreYou";
   std::string myDirectory="/tmp/mySite";
   site.setTargetDirectory(myDirectory);
   site.setTitle(siteTitle);
