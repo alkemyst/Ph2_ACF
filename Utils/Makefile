@@ -1,7 +1,7 @@
 Objs                    = Exception.o Utilities.o Event.o Data.o argvparser.o
 CC              = gcc
 CXX             = g++
-CCFlags         = -g -O1 -w -Wall -pedantic -fPIC `root-config --cflags --evelibs` -Wcpp
+CCFlags         = -g -O1 -w -Wall -pedantic -fPIC -Wcpp
 #DevFlags                   = -D__CBCDAQ_DEV__
 DevFlags		=
 

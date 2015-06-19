@@ -12,7 +12,7 @@
 #define CMTESTER_H__
 
 
-#include "../System/SystemController.h"
+#include "Tool.h"
 #include "../Utils/CommonVisitors.h"
 
 // ROOT
@@ -45,12 +45,11 @@ typedef std::map<Module*, std::map<std::string, TObject*> > ModuleHistogramMap;
  * \brief Class to perform Common Mode noise studies
  */
 
-class CMTester : public SystemController
+class CMTester : public Tool
 {
 
   public:
 	void Initialize();
-	void InitializeGUI( std::vector<TCanvas*> pCanvasVector );
 	void ScanNoiseChannels();
 	void TakeData();
 	void FinishRun();

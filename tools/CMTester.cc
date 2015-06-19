@@ -38,42 +38,7 @@ void CMTester::Initialize()
 	std::cout << "Histograms and Settings initialised." << std::endl;
 }
 
-void CMTester::InitializeGUI( std::vector<TCanvas*> pCanvasVector )
-{
 
-	// gStyle->SetOptStat( 000000 );
-	// gStyle->SetTitleOffset( 1.3, "Y" );
-
-	for ( auto& cShelve : fShelveVector )
-	{
-		uint32_t cShelveId = cShelve->getShelveId();
-
-		for ( auto& cBoard : cShelve->fBoardVector )
-		{
-			uint32_t cBoardId = cBoard->getBeId();
-
-			for ( auto& cFe : cBoard->fModuleVector )
-			{
-				uint32_t cFeId = cFe->getFeId();
-
-				for ( auto& cCbc : cFe->fCbcVector )
-				{
-					uint32_t cCbcId = cCbc->getCbcId();
-
-					TCanvas* ctmpCanvas = pCanvasVector.at( cCbcId );
-					ctmpCanvas->Divide( 2, 2 );
-					ctmpCanvas->SetName( Form( "c_online_canvas_fe%d_cbc%d", cFeId, cCbcId ) );
-					ctmpCanvas->SetTitle( Form( "FE%d CBC%d Online Canvas", cFeId, cCbcId ) );
-					fCanvasMap[cCbc] = ctmpCanvas;
-				}
-			}
-		}
-	}
-
-	initializeHists();
-
-	std::cout << "Histograms and Settings initialised." << std::endl;
-}
 
 void CMTester::ScanNoiseChannels()
 {
@@ -84,22 +49,23 @@ void CMTester::ScanNoiseChannels()
 	{
 		for ( BeBoard* pBoard : cShelve->fBoardVector )
 		{
-			uint32_t cN = 0;
+			uint32_t cN = 1;
 			uint32_t cNthAcq = 0;
 
-			while ( cN <  cTotalEvents )
-			{
-				Run( pBoard, cNthAcq );
+			fBeBoardInterface->Start( pBoard );
 
+			while ( cN <=  cTotalEvents )
+			{
+				// Run( pBoard, cNthAcq );
+				if ( cN > cTotalEvents ) break;
+				fBeBoardInterface->ReadData( pBoard, cNthAcq, false );
 				const Event* cEvent = fBeBoardInterface->GetNextEvent( pBoard );
 
 				// Loop over Events from this Acquisition
-
 				while ( cEvent )
-					// while(cN < cTotalEvents)
 				{
 
-					if ( cN == cTotalEvents )
+					if ( cN > cTotalEvents )
 						break;
 
 					for ( auto& cFe : pBoard->fModuleVector )
@@ -126,12 +92,13 @@ void CMTester::ScanNoiseChannels()
 
 					cN++;
 
-					// if ( cN < cTotalEvents )
-					cEvent = fBeBoardInterface->GetNextEvent( pBoard );
-					// else break;
+					if ( cN <= cTotalEvents )
+						cEvent = fBeBoardInterface->GetNextEvent( pBoard );
+					else break;
 				}
 				cNthAcq++;
 			} // End of Analyze Events of last Acquistion loop
+			fBeBoardInterface->Stop( pBoard, cNthAcq );
 		}
 	}
 
@@ -156,7 +123,7 @@ void CMTester::ScanNoiseChannels()
 				if ( fabs( cStripOccupancy - cMean ) > cMean / 2 )
 				{
 					cNoiseSet->second.insert( cNoiseStrips->GetBinCenter( cBin ) );
-					std::cout << "Found noisy Strip on CBC " << int(cCbc.first->getCbcId()) << " : " << cNoiseStrips->GetBinCenter( cBin ) << std::endl;
+					std::cout << "Found noisy Strip on CBC " << int( cCbc.first->getCbcId() ) << " : " << cNoiseStrips->GetBinCenter( cBin ) << std::endl;
 				}
 			}
 		}
@@ -178,10 +145,13 @@ void CMTester::TakeData()
 			uint32_t cN = 0;
 			uint32_t cNthAcq = 0;
 
-			while ( cN <  fNevents )
-			{
-				Run( pBoard, cNthAcq );
+			fBeBoardInterface->Start( pBoard );
 
+			while ( cN <=  fNevents )
+			{
+				// Run( pBoard, cNthAcq );
+				if ( cN > fNevents ) break;
+				fBeBoardInterface->ReadData( pBoard, cNthAcq, false );
 				const Event* cEvent = fBeBoardInterface->GetNextEvent( pBoard );
 
 				// Loop over Events from this Acquisition
@@ -190,7 +160,7 @@ void CMTester::TakeData()
 					// while ( cN < fNevents )
 				{
 
-					if ( cN == fNevents )
+					if ( cN > fNevents )
 						break;
 
 					analyze( pBoard, cEvent );
@@ -203,12 +173,13 @@ void CMTester::TakeData()
 
 					cN++;
 
-					if ( cN < fNevents )
+					if ( cN <= fNevents )
 						cEvent = fBeBoardInterface->GetNextEvent( pBoard );
 					else break;
 				}
 				cNthAcq++;
 			} // End of Analyze Events of last Acquistion loop
+			fBeBoardInterface->Stop( pBoard, cNthAcq );
 		}
 	}
 

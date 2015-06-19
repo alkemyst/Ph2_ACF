@@ -12,11 +12,7 @@
 #ifndef FastCalibration_h__
 #define FastCalibration_h__
 
-#include "../HWDescription/BeBoard.h"
-#include "../HWInterface/CbcInterface.h"
-#include "../HWInterface/BeBoardInterface.h"
-#include "../System/SystemController.h"
-#include "../Utils/ConsoleColor.h"
+#include "Tool.h"
 #include "Channel.h"
 #include "../Utils/Visitor.h"
 #include "../Utils/CommonVisitors.h"
@@ -47,7 +43,7 @@ Key=-1 to do calibration on all channels
 Key=0-7 for the 8 Test Groups
 */
 
-class FastCalibration : public SystemController
+class FastCalibration : public Tool
 {
   public:
 	FastCalibration( bool pbitwisetune , bool pAllChan ) {

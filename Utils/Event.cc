@@ -90,7 +90,7 @@ namespace Ph2_HwInterface
 	{
 		int vsize = sizeof( uint32_t );
 
-		fBuf = const_cast<char*>(pEvent);
+		fBuf = const_cast<char*>( pEvent );
 
 		fBunch = 0x00FFFFFF & swap_bytes( &fBuf[0 * vsize] );
 
@@ -132,7 +132,7 @@ namespace Ph2_HwInterface
 
 		if ( cIt == fEventMap.end() )
 		{
-		        std::cout << "Event: FE " << +pFeId << " is not found." << std::endl;
+			std::cout << "Event: FE " << +pFeId << " is not found." << std::endl;
 			return nullptr;
 		}
 
@@ -140,7 +140,7 @@ namespace Ph2_HwInterface
 
 		if ( cJt == cIt->second.end() )
 		{
-		        std::cout << "Event: CBC " << +pCbcId << " is not found." << std::endl;
+			std::cout << "Event: CBC " << +pCbcId << " is not found." << std::endl;
 			return nullptr;
 		}
 
@@ -186,7 +186,7 @@ namespace Ph2_HwInterface
 
 		for ( uint32_t i = 0; i < cWidth; i++ )
 		{
-		        val <<= 1;
+			val <<= 1;
 			val |= Error( pFeId, pCbcId, i );
 		}
 
@@ -202,7 +202,7 @@ namespace Ph2_HwInterface
 
 		for ( uint32_t i = 0; i < cWidth; i++ )
 		{
-		        val <<= 1;
+			val <<= 1;
 			val |= Bit( pFeId, pCbcId, cOffset + i );
 		}
 
@@ -276,7 +276,7 @@ namespace Ph2_HwInterface
 
 		for ( uint32_t i = 0; i < cMaskWidth; i++ )
 		{
-		        cMask <<= 1;
+			cMask <<= 1;
 			cMask |= 1;
 		}
 
@@ -298,7 +298,7 @@ namespace Ph2_HwInterface
 
 		for ( uint32_t i = 0; i < cMaskWidth; i++ )
 		{
-		        cMask <<= 1;
+			cMask <<= 1;
 			cMask |= 1;
 		}
 
@@ -314,18 +314,18 @@ namespace Ph2_HwInterface
 	}
 
 
-	std::string Event::StubBitString( uint8_t pFeId, uint8_t pCbcId ) const
-	{
-		return BitString( pFeId, pCbcId, OFFSET_CBCSTUBDATA, WIDTH_CBCSTUBDATA );
+	bool Event::StubBit( uint8_t pFeId, uint8_t pCbcId ) const
+	{		
+		return Bit( pFeId, pCbcId, OFFSET_CBCSTUBDATA );
 	}
 
 	std::ostream& operator<<( std::ostream& os, const Event& ev )
 	{
+		os << BOLDBLUE <<  "  L1A Counter: " << ev.GetEventCount() << std::endl;
+		os << "  CBC Counter: " << ev.GetEventCountCBC() << RESET << std::endl;
 		os << "Bunch Counter: " << ev.GetBunch() << std::endl;
 		os << "Orbit Counter: " << ev.GetOrbit() << std::endl;
 		os << " Lumi Section: " << ev.GetLumi() << std::endl;
-		os << "  L1A Counter: " << ev.GetEventCount() << std::endl;
-		os << "  CBC Counter: " << ev.GetEventCountCBC() << std::endl;
 		os << "  TDC Counter: " << ev.GetTDC() << std::endl;
 
 		os << "CBC Data:" << std::endl;
@@ -340,12 +340,15 @@ namespace Ph2_HwInterface
 			{
 				uint32_t cbcId = jt.first;
 				std::string data( ev.DataBitString( feId, cbcId ) );
-				os << "FEId = " << feId << " CBCId = " << cbcId << " len(data) = " << data.size() << std::endl;
-				os << std::setw( 32 ) << data.substr( 0, FIRST_LINE_WIDTH ) << std::endl;
+				os << GREEN << "FEId = " << feId << " CBCId = " << cbcId << RESET << " len(data) = " << data.size() << std::endl;
+				os << RED << "Error: " << static_cast<std::bitset<10>>(ev.Error(feId, cbcId)) << RESET << std::endl;
+				os << "Ch. Data: " << data.substr( 0, FIRST_LINE_WIDTH ) << std::endl;
 				for ( int i = 0; i < 7; ++i )
 					os << data.substr( FIRST_LINE_WIDTH + LINE_WIDTH * i, LINE_WIDTH ) << std::endl;
 				os << data.substr( FIRST_LINE_WIDTH + LINE_WIDTH * 7, LAST_LINE_WIDTH ) << std::endl;
+				os << "Stubs: " << ev.StubBit(feId, cbcId ) << std::endl;
 			}
+
 			os << std::endl;
 		}
 		return os;
